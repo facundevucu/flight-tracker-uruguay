@@ -102,11 +102,11 @@ def clasificar_tipo_vuelo(vuelo):
     tipo = (vuelo.get("aircraft_type") or "").upper()
     iata = vuelo.get("operator_iata")
 
-    # --- Detectar vuelos militares ---
+    #vuelos militares
     if any(op in operador for op in ["FAU", "FAB", "FACH", "BOL", "ARM"]):
         return "Militar"
 
-    # --- Detectar privados y aviación general por matrícula ---
+    #detectar vuelos privados o aviación general con matrícula
     if "-" in ident:
         prefijo = ident.split("-")[0]
         paises_privados = {
@@ -125,10 +125,10 @@ def clasificar_tipo_vuelo(vuelo):
             "HP": "Panamá",
             "HK": "Colombia",
         }
-        # Determinar país
+        #determinar país según prefijo
         pais = next((p for pref, p in paises_privados.items() if prefijo.startswith(pref)), None)
         if pais:
-            # Clasificar según tipo de avión
+            #clasificar según tipo de aeronave
             if tipo.startswith(("C1", "C2", "P2", "PA", "BE", "SR", "DA")):
                 return f"Aviación General ({pais})"
             elif tipo.startswith(("C5", "C6", "C7", "G", "F", "LJ", "E5", "H")):
@@ -137,11 +137,11 @@ def clasificar_tipo_vuelo(vuelo):
                 return f"Privado ({pais})"
         return "Privado (Desconocido)"
 
-    # --- Detectar privados o aviación general sin matrícula ---
+    # detectar aviación general sin matrícula
     if tipo.startswith(("C", "P", "B", "S", "D")) and not iata:
         return "Aviación General (Desconocida)"
 
-    # --- Detectar vuelos comerciales ---
+    #detectar vuelos comerciales
     if iata in AEROLINEAS_URUGUAY:
         return "Comercial"
 
