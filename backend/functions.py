@@ -39,11 +39,11 @@ AEROLINEAS_URUGUAY = {
     "LXP": "LATAM Express",
     "LAN": "LATAM Chile",
 
-    #aerolíneas Argentinas / Austral
+    #aerolíneas argentinas / austral
     "AR": "Aerolíneas Argentinas",
     "AUS": "Austral Líneas Aéreas",
 
-    #copa Airlines
+    #copa airlines
     "CM": "Copa Airlines",
     "CMP": "Copa Airlines",
 
@@ -68,7 +68,7 @@ AEROLINEAS_URUGUAY = {
     "Z8": "Amaszonas Uruguay",
     "AZU": "Amaszonas Uruguay",
 
-    #iberia Express / air Europa
+    #iberia Express / air europa
     "I2": "Iberia Express",
     "UX": "Air Europa",
 
@@ -85,7 +85,7 @@ AEROLINEAS_URUGUAY = {
     "LP": "LATAM Airlines Perú",
     "JZ": "JetSmart Perú",
     "2I": "Star Perú",
-    "QCL": "Quick Air Jet Charter",
+    "QCL": "Air Class Líneas Aéreas",
     "QT": "Avianca Cargo (Tampa Cargo)",
 }
 
@@ -94,3 +94,55 @@ def normalizar_aerolinea(codigo: str) -> str:
     if not codigo:
         return "Desconocido"
     return AEROLINEAS_URUGUAY.get(codigo.upper(), codigo)
+
+def clasificar_tipo_vuelo(vuelo):
+    """Clasifica el vuelo como 'Comercial', 'Privado (país)', 'Aviación General (país)', 'Militar' o 'Desconocido'."""
+    ident = (vuelo.get("ident") or "").upper()
+    operador = (vuelo.get("operator_icao") or "").upper()
+    tipo = (vuelo.get("aircraft_type") or "").upper()
+    iata = vuelo.get("operator_iata")
+
+    # --- Detectar vuelos militares ---
+    if any(op in operador for op in ["FAU", "FAB", "FACH", "BOL", "ARM"]):
+        return "Militar"
+
+    # --- Detectar privados y aviación general por matrícula ---
+    if "-" in ident:
+        prefijo = ident.split("-")[0]
+        paises_privados = {
+            "CX": "Uruguay",
+            "LV": "Argentina",
+            "CC": "Chile",
+            "CP": "Bolivia",
+            "PP": "Brasil",
+            "PT": "Brasil",
+            "PR": "Brasil",
+            "N":  "EE.UU.",
+            "XB": "México",
+            "TG": "Guatemala",
+            "OB": "Perú",
+            "HC": "Ecuador",
+            "HP": "Panamá",
+            "HK": "Colombia",
+        }
+        # Determinar país
+        pais = next((p for pref, p in paises_privados.items() if prefijo.startswith(pref)), None)
+        if pais:
+            # Clasificar según tipo de avión
+            if tipo.startswith(("C1", "C2", "P2", "PA", "BE", "SR", "DA")):
+                return f"Aviación General ({pais})"
+            elif tipo.startswith(("C5", "C6", "C7", "G", "F", "LJ", "E5", "H")):
+                return f"Privado ({pais})"
+            else:
+                return f"Privado ({pais})"
+        return "Privado (Desconocido)"
+
+    # --- Detectar privados o aviación general sin matrícula ---
+    if tipo.startswith(("C", "P", "B", "S", "D")) and not iata:
+        return "Aviación General (Desconocida)"
+
+    # --- Detectar vuelos comerciales ---
+    if iata in AEROLINEAS_URUGUAY:
+        return "Comercial"
+
+    return "Desconocido"
