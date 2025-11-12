@@ -65,6 +65,34 @@ class Vuelo:
         print(f"  Aeronave: {self.aeronave}")
         print(f"  Estado: {self.estado}")
         print("-" * 40)
+class VueloBase:
+    def __init__(self, datos):
+        self.ident = (datos.get("ident") or "").upper()
+        self.operador = (datos.get("operator_icao") or "").upper()
+        self.tipo = (datos.get("aircraft_type") or "").upper()
+        self.iata = datos.get("operator_iata")
+
+    def clasificar(self):
+        return "Desconocido"
+
+
+class VueloMilitar(VueloBase):
+    def clasificar(self):
+        return "Militar"
+
+
+class VueloPrivado(VueloBase):
+    def __init__(self, datos, pais):
+        super().__init__(datos)
+        self.pais = pais
+
+    def clasificar(self):
+        return f"Privado ({self.pais})"
+
+
+class VueloComercial(VueloBase):
+    def clasificar(self):
+        return "Comercial"     
 
 
 

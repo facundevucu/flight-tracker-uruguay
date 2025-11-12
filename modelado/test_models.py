@@ -43,15 +43,22 @@ for vuelo_data in arrivals:
         destino_data.get("name")
     )
 
-    vuelo = Vuelo(
-        vuelo_data.get("ident"),
-        aerolinea,
-        aeronave,
-        origen,
-        destino,
-        vuelo_data.get("status")
+    # determinar número/identificador del vuelo desde campos comunes
+    numero_vuelo = (
+        (vuelo_data.get("ident") or "")
+        or vuelo_data.get("flight_iata")
+        or vuelo_data.get("flight_number")
+        or vuelo_data.get("callsign")
+        or ( (vuelo_data.get("operator_iata") or "") + (vuelo_data.get("flight_number") or "") )
+        or "N/A"
     )
 
+    salida = origen          # si preferís usar datos crudos: origen_data
+    llegada = destino        # o destino_data
+    estado = vuelo_data.get("status", "N/A")
+
+    # pasar numero_vuelo como primer argumento según la firma de Vuelo
+    vuelo = Vuelo(numero_vuelo, aerolinea, aeronave, salida, llegada, estado)
     vuelos_objetos.append(vuelo)
 
 print("\n--vuelos de llegada--\n")
