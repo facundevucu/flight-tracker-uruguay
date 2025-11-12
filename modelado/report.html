@@ -1,0 +1,158 @@
+<!doctype html><html lang='es'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>Reporte Vuelos</title>
+<style>
+:root {
+  --background: oklch(0.9900 0 0);
+  --foreground: oklch(0 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0 0 0);
+  --popover: oklch(0.9900 0 0);
+  --popover-foreground: oklch(0 0 0);
+  --primary: oklch(0 0 0);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.9400 0 0);
+  --secondary-foreground: oklch(0 0 0);
+  --muted: oklch(0.9700 0 0);
+  --muted-foreground: oklch(0.4400 0 0);
+  --accent: oklch(0.9400 0 0);
+  --accent-foreground: oklch(0 0 0);
+  --destructive: oklch(0.6300 0.1900 23.0300);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.9200 0 0);
+  --input: oklch(0.9400 0 0);
+  --ring: oklch(0 0 0);
+  --chart-1: oklch(0.8100 0.1700 75.3500);
+  --chart-2: oklch(0.5500 0.2200 264.5300);
+  --chart-3: oklch(0.7200 0 0);
+  --chart-4: oklch(0.9200 0 0);
+  --chart-5: oklch(0.5600 0 0);
+  --sidebar: oklch(0.9900 0 0);
+  --sidebar-foreground: oklch(0 0 0);
+  --sidebar-primary: oklch(0 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.9400 0 0);
+  --sidebar-accent-foreground: oklch(0 0 0);
+  --sidebar-border: oklch(0.9400 0 0);
+  --sidebar-ring: oklch(0 0 0);
+  --font-sans: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: "Geist Mono", monospace;
+  --radius: 0.5rem;
+  --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.09);
+  --shadow-xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.09);
+  --shadow-sm: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 1px 2px -1px hsl(0 0% 0% / 0.18);
+  --shadow: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 1px 2px -1px hsl(0 0% 0% / 0.18);
+  --shadow-md: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 2px 4px -1px hsl(0 0% 0% / 0.18);
+  --shadow-lg: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 4px 6px -1px hsl(0 0% 0% / 0.18);
+  --shadow-xl: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 8px 10px -1px hsl(0 0% 0% / 0.18);
+  --shadow-2xl: 0px 1px 2px 0px hsl(0 0% 0% / 0.45);
+}
+
+.dark {
+  --background: oklch(0 0 0);
+  --foreground: oklch(1 0 0);
+  --card: oklch(0.1400 0 0);
+  --card-foreground: oklch(1 0 0);
+  --popover: oklch(0.1800 0 0);
+  --popover-foreground: oklch(1 0 0);
+  --primary: oklch(1 0 0);
+  --primary-foreground: oklch(0 0 0);
+  --secondary: oklch(0.2500 0 0);
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.2300 0 0);
+  --muted-foreground: oklch(0.7200 0 0);
+  --accent: oklch(0.3200 0 0);
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.6900 0.2000 23.9100);
+  --destructive-foreground: oklch(0 0 0);
+  --border: oklch(0.2600 0 0);
+  --input: oklch(0.3200 0 0);
+  --ring: oklch(0.7200 0 0);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body {
+  font-family: var(--font-sans);
+  background-color: var(--background);
+  color: var(--foreground);
+  padding: 2rem;
+  line-height: 1.6;
+}
+
+h1, h2, h3 { margin-top: 1.5rem; margin-bottom: 1rem; font-weight: 600; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; color: var(--primary); }
+h3 { font-size: 1.25rem; }
+
+p { margin-bottom: 1rem; color: var(--muted-foreground); }
+
+ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+li { margin-bottom: 0.5rem; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  background-color: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+thead {
+  background-color: var(--secondary);
+  border-bottom: 2px solid var(--border);
+}
+
+th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--card-foreground);
+}
+
+tbody tr:hover {
+  background-color: var(--muted);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+ul {
+  background-color: var(--card);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  list-style-position: inside;
+}
+
+li {
+  color: var(--card-foreground);
+  padding: 0.5rem 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+</style></head><body>
+<h1>Reporte simple - vuelos_prueba.json</h1>
+<p>Arrivals: 15 — Departures: 15</p>
+<h2>Top aerolíneas (Arrivals)</h2>
+<ul><li>Copa Airlines: 3</li><li>Sky Airline: 2</li><li>Aerolíneas Argentinas: 2</li><li>Iberia: 1</li><li>Paranair: 1</li><li>LATAM Airlines Perú: 1</li><li>Avianca: 1</li><li>GOL Linhas Aéreas: 1</li><li>LATAM Brasil: 1</li><li>Air Class Líneas Aéreas: 1</li></ul>
+<h2>Top tipos (Arrivals)</h2>
+<ul><li>Comercial: 14</li><li>Desconocido: 1</li></ul>
+<h2>Top aerolíneas (Departures)</h2>
+<ul><li>Aerolíneas Argentinas: 2</li><li>Copa Airlines: 2</li><li>LATAM Brasil: 2</li><li>CA: 1</li><li>LATAM Airlines Perú: 1</li><li>Avianca: 1</li><li>GOL Linhas Aéreas: 1</li><li>Avianca Cargo (Tampa Cargo): 1</li><li>Air Class Líneas Aéreas: 1</li><li>Sky Airline: 1</li></ul>
+<h2>Top tipos (Departures)</h2>
+<ul><li>Comercial: 12</li><li>Desconocido: 2</li><li>Privado (Argentina): 1</li></ul>
+<h2>Arrivals (primeros 15)</h2><table><thead><tr><th>Ident</th><th>Op</th><th>Aerolínea</th><th>Origen → Destino</th><th>Tipo</th></tr></thead><tbody><tr><td>SKU1810</td><td>H2</td><td>Sky Airline</td><td>SCL → MVD</td><td>Comercial</td></tr><tr><td>IBE169</td><td>IB</td><td>Iberia</td><td>MAD → MVD</td><td>Comercial</td></tr><tr><td>ARG1382</td><td>AR</td><td>Aerolíneas Argentinas</td><td>AEP → MVD</td><td>Comercial</td></tr><tr><td>AZP844</td><td>ZP</td><td>Paranair</td><td>ASU → MVD</td><td>Comercial</td></tr><tr><td>LPE2420</td><td>LP</td><td>LATAM Airlines Perú</td><td>LIM → MVD</td><td>Comercial</td></tr><tr><td>CMP368</td><td>CM</td><td>Copa Airlines</td><td>PTY → MVD</td><td>Comercial</td></tr><tr><td>AVA109</td><td>AV</td><td>Avianca</td><td>BOG → MVD</td><td>Comercial</td></tr><tr><td>GLO7644</td><td>G3</td><td>GOL Linhas Aéreas</td><td>GIG → MVD</td><td>Comercial</td></tr><tr><td>CMP283</td><td>CM</td><td>Copa Airlines</td><td>PTY → MVD</td><td>Comercial</td></tr><tr><td>TAM8016</td><td>JJ</td><td>LATAM Brasil</td><td>GRU → MVD</td><td>Comercial</td></tr><tr><td>QCL426</td><td>QCL</td><td>Air Class Líneas Aéreas</td><td>EZE → MVD</td><td>Desconocido</td></tr><tr><td>TPA4091</td><td>QT</td><td>Avianca Cargo (Tampa Cargo)</td><td>MIA → MVD</td><td>Comercial</td></tr><tr><td>CMP125</td><td>CM</td><td>Copa Airlines</td><td>PTY → MVD</td><td>Comercial</td></tr><tr><td>ARG1388</td><td>AR</td><td>Aerolíneas Argentinas</td><td>AEP → MVD</td><td>Comercial</td></tr><tr><td>SKU1801</td><td>H2</td><td>Sky Airline</td><td>SSA → MVD</td><td>Comercial</td></tr></tbody></table>
+<h2>Departures (primeros 15)</h2><table><thead><tr><th>Ident</th><th>Op</th><th>Aerolínea</th><th>Origen → Destino</th><th>Tipo</th></tr></thead><tbody><tr><td>ARG1383</td><td>AR</td><td>Aerolíneas Argentinas</td><td>MVD → AEP</td><td>Comercial</td></tr><tr><td>CCA28</td><td>CA</td><td>CA</td><td>MVD → Desconocido</td><td>Desconocido</td></tr><tr><td>LPE2421</td><td>LP</td><td>LATAM Airlines Perú</td><td>MVD → LIM</td><td>Comercial</td></tr><tr><td>AVA110</td><td>AV</td><td>Avianca</td><td>MVD → BOG</td><td>Comercial</td></tr><tr><td>GLO7645</td><td>G3</td><td>GOL Linhas Aéreas</td><td>MVD → GIG</td><td>Comercial</td></tr><tr><td>TPA4091</td><td>QT</td><td>Avianca Cargo (Tampa Cargo)</td><td>MVD → VCP</td><td>Comercial</td></tr><tr><td>CMP124</td><td>CM</td><td>Copa Airlines</td><td>MVD → PTY</td><td>Comercial</td></tr><tr><td>TAM8119</td><td>JJ</td><td>LATAM Brasil</td><td>MVD → GRU</td><td>Comercial</td></tr><tr><td>CMP284</td><td>CM</td><td>Copa Airlines</td><td>MVD → PTY</td><td>Comercial</td></tr><tr><td>QCL421</td><td>QCL</td><td>Air Class Líneas Aéreas</td><td>MVD → EZE</td><td>Desconocido</td></tr><tr><td>ARG1389</td><td>AR</td><td>Aerolíneas Argentinas</td><td>MVD → AEP</td><td>Comercial</td></tr><tr><td>SKU1801</td><td>H2</td><td>Sky Airline</td><td>MVD → SCL</td><td>Comercial</td></tr><tr><td>TAM8117</td><td>JJ</td><td>LATAM Brasil</td><td>MVD → GRU</td><td>Comercial</td></tr><tr><td>LV-KFB</td><td>---</td><td>---</td><td>MVD → QAE</td><td>Privado (Argentina)</td></tr><tr><td>IBE170</td><td>IB</td><td>Iberia</td><td>MVD → MAD</td><td>Comercial</td></tr></tbody></table>
+</body></html>
