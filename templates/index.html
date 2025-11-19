@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Vuelos - Inicio{% endblock %}
+{% block content %}
+  <h2>Resumen</h2>
+  <p>{{ total_arrivals }} llegadas | {{ total_departures }} partidas</p>
+
+  <h3>Llegadas</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Ident</th><th>Aerolínea</th><th>Tipo</th><th>Estado</th><th>Origen</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for v in arrivals %}
+      <tr>
+        <td><a href="{{ url_for('vuelo_detalle', ident=v.ident) }}">{{ v.ident }}</a></td>
+        <td>{{ v.aerolinea }}</td>
+        <td><span class="badge tipo-{{ v.tipo.split(' ')[0] }}">{{ v.tipo }}</span></td>
+        <td>{{ v.status }}</td>
+        <td>{{ v.origin.code if v.origin }} / {{ v.origin.city if v.origin }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <h3>Partidas</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Ident</th><th>Aerolínea</th><th>Tipo</th><th>Estado</th><th>Destino</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for v in departures %}
+      <tr>
+        <td><a href="{{ url_for('vuelo_detalle', ident=v.ident) }}">{{ v.ident }}</a></td>
+        <td>{{ v.aerolinea }}</td>
+        <td><span class="badge tipo-{{ v.tipo.split(' ')[0] }}">{{ v.tipo }}</span></td>
+        <td>{{ v.status }}</td>
+        <td>{{ v.destination.code if v.destination }} / {{ v.destination.city if v.destination }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

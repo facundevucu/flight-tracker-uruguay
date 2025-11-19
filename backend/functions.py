@@ -1,37 +1,63 @@
+import json
+
 def obtener_vuelos_desde(data, codigo_aereopuerto):
     vuelos = []
-    for vuelo in data.get("departures", []):
-        #obtiene la lista de departures, si no existe devuelve [], lista vacia
-        origen = vuelo.get("origin", {}).get("code", "")
-        #entra al diccionario vuelo y saca el valor de code
-        if origen == codigo_aereopuerto:
-            vuelos.append(vuelo)
+    for vuelo in data.get("departures", []) or []:
+        try:
+            origen = (vuelo.get("origin") or {}).get("code", "")
+            if origen == codigo_aereopuerto:
+                vuelos.append(vuelo)
+        except Exception:
+            # ignorar vuelo corrupto y continuar
+            continue
     return vuelos
 
 def obtener_vuelos_hacia(data, codigo_aereopuerto):
     vuelos = []
-    for vuelo in data.get("arrivals", []):
-        destino = vuelo.get("destination", {}).get("code", "")
-        if destino == codigo_aereopuerto:
-            vuelos.append(vuelo)
+    for vuelo in data.get("arrivals", []) or []:
+        try:
+            destino = (vuelo.get("destination") or {}).get("code", "")
+            if destino == codigo_aereopuerto:
+                vuelos.append(vuelo)
+        except Exception:
+            continue
     return vuelos
 
 def buscar_vuelo_por_codigo(data, codigo_vuelo):
     for tipo in ["arrivals", "departures", "scheduled_arrivals"]:
-        for vuelo in data.get(tipo, []):
-            if vuelo.get("ident") == codigo_vuelo:
-                return vuelo
+        for vuelo in data.get(tipo, []) or []:
+            try:
+                if vuelo.get("ident") == codigo_vuelo:
+                    return vuelo
+            except Exception:
+                continue
     return None
 
 def filtrar_vuelos_por_estado(vuelos, estado):
-    filtrados = [v for v in vuelos if estado.lower() in v.get("status", "").lower()]
-    return filtrados
+    try:
+        filtrados = []
+        for v in vuelos or []:
+            try:
+                status = (v.get("status") or "").lower()
+                if estado.lower() in status:
+                    filtrados.append(v)
+            except Exception:
+                continue
+        return filtrados
+    except Exception:
+        return []
 
-import json
 def guardar_vuelos_en_json(nombre_archivo, vuelos):
-    with open(nombre_archivo, "w", encoding="utf-8") as f:
-        json.dump(vuelos, f, ensure_ascii = False, indent = 2)
-        
+    try:
+        with open(nombre_archivo, "w", encoding="utf-8") as f:
+            json.dump(vuelos, f, ensure_ascii=False, indent=2)
+        return True
+    except IOError as e:
+        print(f"Error escribiendo {nombre_archivo}: {e}")
+        return False
+    except Exception as e:
+        print(f"Error inesperado guardando JSON: {e}")
+        return False
 
 AEROLINEAS_URUGUAY = {
     #LATAM
@@ -91,58 +117,64 @@ AEROLINEAS_URUGUAY = {
 
 def normalizar_aerolinea(codigo: str) -> str:
     """Devuelve el nombre completo de la aerolínea si se conoce, o el código original."""
-    if not codigo:
+    try:
+        if not codigo:
+            return "Desconocido"
+        return AEROLINEAS_URUGUAY.get(str(codigo).upper(), codigo)
+    except Exception:
         return "Desconocido"
-    return AEROLINEAS_URUGUAY.get(codigo.upper(), codigo)
 
 def clasificar_tipo_vuelo(vuelo):
     """Clasifica el vuelo como 'Comercial', 'Privado (país)', 'Aviación General (país)', 'Militar' o 'Desconocido'."""
-    ident = (vuelo.get("ident") or "").upper()
-    operador = (vuelo.get("operator_icao") or "").upper()
-    tipo = (vuelo.get("aircraft_type") or "").upper()
-    iata = vuelo.get("operator_iata")
+    try:
+        if not isinstance(vuelo, dict):
+            return "Desconocido"
 
-    # --- Detectar vuelos militares ---
-    if any(op in operador for op in ["FAU", "FAB", "FACH", "BOL", "ARM"]):
-        return "Militar"
+        ident = (vuelo.get("ident") or "").upper()
+        operador = (vuelo.get("operator_icao") or "").upper()
+        tipo = (vuelo.get("aircraft_type") or "").upper()
+        iata = (vuelo.get("operator_iata") or "")
 
-    # --- Detectar privados y aviación general por matrícula ---
-    if "-" in ident:
-        prefijo = ident.split("-")[0]
-        paises_privados = {
-            "CX": "Uruguay",
-            "LV": "Argentina",
-            "CC": "Chile",
-            "CP": "Bolivia",
-            "PP": "Brasil",
-            "PT": "Brasil",
-            "PR": "Brasil",
-            "N":  "EE.UU.",
-            "XB": "México",
-            "TG": "Guatemala",
-            "OB": "Perú",
-            "HC": "Ecuador",
-            "HP": "Panamá",
-            "HK": "Colombia",
-        }
-        # Determinar país
-        pais = next((p for pref, p in paises_privados.items() if prefijo.startswith(pref)), None)
-        if pais:
-            # Clasificar según tipo de avión
-            if tipo.startswith(("C1", "C2", "P2", "PA", "BE", "SR", "DA")):
-                return f"Aviación General ({pais})"
-            elif tipo.startswith(("C5", "C6", "C7", "G", "F", "LJ", "E5", "H")):
-                return f"Privado ({pais})"
-            else:
-                return f"Privado ({pais})"
-        return "Privado (Desconocido)"
+        # --- Detectar vuelos militares ---
+        if any(op in operador for op in ["FAU", "FAB", "FACH", "BOL", "ARM"]):
+            return "Militar"
 
-    # --- Detectar privados o aviación general sin matrícula ---
-    if tipo.startswith(("C", "P", "B", "S", "D")) and not iata:
-        return "Aviación General (Desconocida)"
+        # --- Detectar privados y aviación general por matrícula ---
+        if "-" in ident:
+            prefijo = ident.split("-")[0]
+            paises_privados = {
+                "CX": "Uruguay",
+                "LV": "Argentina",
+                "CC": "Chile",
+                "CP": "Bolivia",
+                "PP": "Brasil",
+                "PT": "Brasil",
+                "PR": "Brasil",
+                "N":  "EE.UU.",
+                "XB": "México",
+                "TG": "Guatemala",
+                "OB": "Perú",
+                "HC": "Ecuador",
+                "HP": "Panamá",
+                "HK": "Colombia",
+            }
+            pais = next((p for pref, p in paises_privados.items() if prefijo.startswith(pref)), None)
+            if pais:
+                # Asegurar que `tipo` sea cadena antes de startswith
+                if isinstance(tipo, str) and tipo.startswith(("C1", "C2", "P2", "PA", "BE", "SR", "DA")):
+                    return f"Aviación General ({pais})"
+                else:
+                    return f"Privado ({pais})"
+            return "Privado (Desconocido)"
 
-    # --- Detectar vuelos comerciales ---
-    if iata in AEROLINEAS_URUGUAY:
-        return "Comercial"
+        # --- Detectar privados o aviación general sin matrícula ---
+        if isinstance(tipo, str) and tipo.startswith(("C", "P", "B", "S", "D")) and not iata:
+            return "Aviación General (Desconocida)"
 
-    return "Desconocido"
+        # --- Detectar vuelos comerciales ---
+        if isinstance(iata, str) and iata.upper() in AEROLINEAS_URUGUAY:
+            return "Comercial"
+
+        return "Desconocido"
+    except Exception:
+        return "Desconocido"

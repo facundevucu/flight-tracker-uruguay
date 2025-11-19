@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Detalle Vuelo {{ vuelo.ident }}{% endblock %}
+{% block content %}
+  <h2>Vuelo {{ vuelo.ident }}</h2>
+  <p><strong>Aerolínea:</strong> {{ vuelo.aerolinea }}</p>
+  <p><strong>Tipo:</strong> {{ vuelo.tipo }}</p>
+  <p><strong>Estado:</strong> {{ vuelo.status }}</p>
+  <p><strong>Origen:</strong> {% if vuelo.origin %}{{ vuelo.origin.code }} - {{ vuelo.origin.city }}{% else %}N/D{% endif %}</p>
+  <p><strong>Destino:</strong> {% if vuelo.destination %}{{ vuelo.destination.code }} - {{ vuelo.destination.city }}{% else %}N/D{% endif %}</p>
+  <p><strong>Avión:</strong> {{ vuelo.aircraft_type or 'N/D' }}</p>
+  <p><strong>Horarios:</strong><br>
+     Salida programada: {{ vuelo.scheduled_out or 'N/D' }}<br>
+     Salida real: {{ vuelo.actual_out or 'N/D' }}<br>
+     Llegada programada: {{ vuelo.scheduled_in or 'N/D' }}<br>
+     Llegada real: {{ vuelo.actual_in or 'N/D' }}
+  </p>
+  <p><a href="{{ url_for('index') }}">Volver</a></p>
+{% endblock %}

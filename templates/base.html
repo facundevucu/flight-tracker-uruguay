@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}Vuelos Uruguay{% endblock %}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 1.5rem; background:#f5f7fa; }
+    header { margin-bottom: 1.5rem; }
+    nav a { margin-right: .75rem; text-decoration:none; color:#0366d6; }
+    table { border-collapse: collapse; width:100%; margin-bottom:2rem; background:white; }
+    th, td { padding: .5rem .6rem; border:1px solid #ddd; font-size:.85rem; }
+    th { background:#eef2f7; text-align:left; }
+    .badge { display:inline-block; padding:2px 6px; border-radius:4px; font-size:.7rem; background:#444; color:white; }
+    .tipo-Comercial { background:#0d6efd; }
+    .tipo-Privado { background:#6f42c1; }
+    .tipo-Aviación { background:#198754; }
+    .tipo-Militar { background:#dc3545; }
+    .flash { padding:.6rem .8rem; border-radius:4px; margin-bottom:1rem; }
+    .flash-success { background:#d1e7dd; }
+    .flash-warning { background:#fff3cd; }
+    .flash-danger { background:#f8d7da; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Seguimiento de Vuelos</h1>
+    <nav>
+      <a href="{{ url_for('index') }}">Inicio</a>
+      <a href="{{ url_for('actualizar') }}">Actualizar datos</a>
+    </nav>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash flash-{{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </header>
+  {% block content %}{% endblock %}
+</body>
+</html>

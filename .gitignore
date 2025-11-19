@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+.venv/
+# Editor
+.vscode/
+.DS_Store
+# Reports/outputs
+report.html
