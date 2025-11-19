@@ -4,39 +4,173 @@
   <meta charset="UTF-8" />
   <title>{% block title %}Vuelos Uruguay{% endblock %}</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { font-family: system-ui, Arial, sans-serif; margin: 1.5rem; background:#f5f7fa; }
-    header { margin-bottom: 1.5rem; }
-    nav a { margin-right: .75rem; text-decoration:none; color:#0366d6; }
-    table { border-collapse: collapse; width:100%; margin-bottom:2rem; background:white; }
-    th, td { padding: .5rem .6rem; border:1px solid #ddd; font-size:.85rem; }
-    th { background:#eef2f7; text-align:left; }
-    .badge { display:inline-block; padding:2px 6px; border-radius:4px; font-size:.7rem; background:#444; color:white; }
-    .tipo-Comercial { background:#0d6efd; }
-    .tipo-Privado { background:#6f42c1; }
-    .tipo-Aviación { background:#198754; }
-    .tipo-Militar { background:#dc3545; }
-    .flash { padding:.6rem .8rem; border-radius:4px; margin-bottom:1rem; }
-    .flash-success { background:#d1e7dd; }
-    .flash-warning { background:#fff3cd; }
-    .flash-danger { background:#f8d7da; }
+    :root {
+      --background: oklch(0.9755 0.0045 258.3245);
+      --foreground: oklch(0.2558 0.0433 268.0662);
+      --card: oklch(0.9341 0.0132 251.5628);
+      --card-foreground: oklch(0.2558 0.0433 268.0662);
+      --primary: oklch(0.4815 0.1178 263.3758);
+      --primary-foreground: oklch(0.9856 0.0278 98.0540);
+      --secondary: oklch(0.8567 0.1164 81.0092);
+      --secondary-foreground: oklch(0.2558 0.0433 268.0662);
+      --muted: oklch(0.9202 0.0080 106.5563);
+      --muted-foreground: oklch(0.4815 0.1178 263.3758);
+      --accent: oklch(0.6896 0.0714 234.0387);
+      --accent-foreground: oklch(0.9856 0.0278 98.0540);
+      --border: oklch(0.7791 0.0156 251.1926);
+      --ring: oklch(0.8567 0.1164 81.0092);
+      --radius: 0.5rem;
+    }
+
+    * {
+      border-color: var(--border);
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      font-family: 'Libre Baskerville', serif;
+      line-height: 1.6;
+    }
+
+    .card {
+      background-color: var(--card);
+      color: var(--card-foreground);
+      border-radius: var(--radius);
+      box-shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border-radius: var(--radius);
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .badge {
+      background-color: var(--accent);
+      color: var(--accent-foreground);
+      border-radius: calc(var(--radius) - 2px);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .badge-comercial {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .badge-privado {
+      background-color: var(--secondary);
+      color: var(--secondary-foreground);
+    }
+
+    .badge-militar {
+      background-color: oklch(0.5280 0.1200 357.1130);
+      color: var(--primary-foreground);
+    }
+
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      overflow: hidden;
+      border-radius: var(--radius);
+    }
+
+    th {
+      background-color: var(--muted);
+      color: var(--muted-foreground);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    td, th {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background-color: var(--muted);
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: var(--accent);
+    }
+
+    .alert {
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid;
+    }
+
+    .alert-success {
+      background-color: oklch(0.95 0.05 145);
+      border-color: oklch(0.6 0.15 145);
+      color: oklch(0.3 0.1 145);
+    }
+
+    .alert-warning {
+      background-color: oklch(0.95 0.05 85);
+      border-color: var(--secondary);
+      color: oklch(0.3 0.1 85);
+    }
+
+    .alert-danger {
+      background-color: oklch(0.95 0.05 25);
+      border-color: oklch(0.5280 0.1200 357.1130);
+      color: oklch(0.3 0.1 25);
+    }
   </style>
 </head>
-<body>
-  <header>
-    <h1>Seguimiento de Vuelos</h1>
-    <nav>
-      <a href="{{ url_for('index') }}">Inicio</a>
-      <a href="{{ url_for('actualizar') }}">Actualizar datos</a>
-    </nav>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, msg in messages %}
-          <div class="flash flash-{{ category }}">{{ msg }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-  </header>
-  {% block content %}{% endblock %}
+<body class="min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <header class="mb-8">
+      <div class="card p-6 mb-6">
+        <h1 class="text-3xl font-bold mb-4" style="color: var(--primary);">✈️ Seguimiento de Vuelos - Uruguay</h1>
+        <nav class="flex gap-4">
+          <a href="{{ url_for('index') }}" class="btn-primary px-4 py-2 rounded-lg">Inicio</a>
+          <a href="{{ url_for('actualizar') }}" class="px-4 py-2 rounded-lg border-2 hover:bg-gray-50 transition-colors" style="border-color: var(--border);">Actualizar datos</a>
+        </nav>
+      </div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="alert alert-{{ category }}">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </header>
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+  </div>
 </body>
 </html>

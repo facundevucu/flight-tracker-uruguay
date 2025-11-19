@@ -16,12 +16,8 @@ from typing import Any, Dict
 
 from flask import Flask, render_template, abort, request, redirect, url_for, flash
 
-from backend.functions import (
-	buscar_vuelo_por_codigo,
-	normalizar_aerolinea,
-	clasificar_tipo_vuelo,
-)
 from backend import api_client
+from backend.procesador import mapear_vuelos, crear_vuelo_desde_api, buscar_vuelo_por_codigo
 
 APP_ROOT = Path(__file__).parent
 DATA_FILE = APP_ROOT / "backend" / "vuelos_prueba.json"
@@ -49,12 +45,12 @@ def crear_app() -> Flask:
 	@app.route("/")
 	def index():
 		data = cargar_datos_local()
-		arrivals = data.get("arrivals", []) or []
-		departures = data.get("departures", []) or []
-		# Enriquecer mínimamente cada vuelo para mostrar en template
-		for v in arrivals + departures:
-			v["aerolinea"] = normalizar_aerolinea(v.get("operator_iata") or v.get("operator_icao"))
-			v["tipo"] = clasificar_tipo_vuelo(v)
+		# PASO 1: Mapear datos crudos JSON a objetos Vuelo modelados
+		vuelos_mapeados = mapear_vuelos(data)
+		arrivals = vuelos_mapeados["arrivals"]
+		departures = vuelos_mapeados["departures"]
+		
+		# PASO 2: Pasar objetos modelados al template
 		return render_template(
 			"index.html",
 			arrivals=arrivals,
@@ -66,11 +62,11 @@ def crear_app() -> Flask:
 	@app.route("/vuelo/<ident>")
 	def vuelo_detalle(ident: str):
 		data = cargar_datos_local()
-		vuelo = buscar_vuelo_por_codigo(data, ident)
-		if not vuelo:
+		vuelo_raw = buscar_vuelo_por_codigo(data, ident)
+		if not vuelo_raw:
 			abort(404, description="Vuelo no encontrado")
-		vuelo["aerolinea"] = normalizar_aerolinea(vuelo.get("operator_iata") or vuelo.get("operator_icao"))
-		vuelo["tipo"] = clasificar_tipo_vuelo(vuelo)
+		# Convertir a objeto Vuelo modelado
+		vuelo = crear_vuelo_desde_api(vuelo_raw)
 		return render_template("vuelo.html", vuelo=vuelo)
 
 	@app.route("/actualizar")

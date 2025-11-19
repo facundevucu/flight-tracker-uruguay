@@ -1,46 +1,103 @@
 {% extends 'base.html' %}
 {% block title %}Vuelos - Inicio{% endblock %}
 {% block content %}
-  <h2>Resumen</h2>
-  <p>{{ total_arrivals }} llegadas | {{ total_departures }} partidas</p>
+  <!-- Resumen con cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="card p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-wide" style="color: var(--muted-foreground);">Llegadas</p>
+          <p class="text-4xl font-bold mt-2" style="color: var(--primary);">{{ total_arrivals }}</p>
+        </div>
+        <div class="text-5xl opacity-20">🛬</div>
+      </div>
+    </div>
+    <div class="card p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-wide" style="color: var(--muted-foreground);">Partidas</p>
+          <p class="text-4xl font-bold mt-2" style="color: var(--secondary);">{{ total_departures }}</p>
+        </div>
+        <div class="text-5xl opacity-20">🛫</div>
+      </div>
+    </div>
+  </div>
 
-  <h3>Llegadas</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Ident</th><th>Aerolínea</th><th>Tipo</th><th>Estado</th><th>Origen</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for v in arrivals %}
-      <tr>
-        <td><a href="{{ url_for('vuelo_detalle', ident=v.ident) }}">{{ v.ident }}</a></td>
-        <td>{{ v.aerolinea }}</td>
-        <td><span class="badge tipo-{{ v.tipo.split(' ')[0] }}">{{ v.tipo }}</span></td>
-        <td>{{ v.status }}</td>
-        <td>{{ v.origin.code if v.origin }} / {{ v.origin.city if v.origin }}</td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+  <!-- Tabla de Llegadas -->
+  <div class="card p-6 mb-8">
+    <h3 class="text-2xl font-bold mb-4 flex items-center gap-2" style="color: var(--primary);">
+      <span>🛬</span> Llegadas
+    </h3>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Vuelo</th>
+            <th>Aerolínea</th>
+            <th>Tipo</th>
+            <th>Modelo</th>
+            <th>Matrícula</th>
+            <th>Estado</th>
+            <th>Origen</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for vuelo in arrivals %}
+          <tr>
+            <td><a href="{{ url_for('vuelo_detalle', ident=vuelo.numero_vuelo) }}" class="font-semibold">{{ vuelo.numero_vuelo }}</a></td>
+            <td>{{ vuelo.aerolinea }}</td>
+            <td>
+              <span class="badge {% if 'Comercial' in vuelo.tipo_vuelo %}badge-comercial{% elif 'Privado' in vuelo.tipo_vuelo %}badge-privado{% elif 'Militar' in vuelo.tipo_vuelo %}badge-militar{% endif %}">
+                {{ vuelo.tipo_vuelo }}
+              </span>
+            </td>
+            <td class="font-medium">{{ vuelo.aeronave }}</td>
+            <td class="text-sm" style="color: var(--muted-foreground);">{{ vuelo.aeronave.matricula }}</td>
+            <td class="text-sm">{{ vuelo.estado }}</td>
+            <td>{{ vuelo.salida if vuelo.salida else '<span style="color: var(--muted-foreground);">N/D</span>' | safe }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-  <h3>Partidas</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Ident</th><th>Aerolínea</th><th>Tipo</th><th>Estado</th><th>Destino</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for v in departures %}
-      <tr>
-        <td><a href="{{ url_for('vuelo_detalle', ident=v.ident) }}">{{ v.ident }}</a></td>
-        <td>{{ v.aerolinea }}</td>
-        <td><span class="badge tipo-{{ v.tipo.split(' ')[0] }}">{{ v.tipo }}</span></td>
-        <td>{{ v.status }}</td>
-        <td>{{ v.destination.code if v.destination }} / {{ v.destination.city if v.destination }}</td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+  <!-- Tabla de Partidas -->
+  <div class="card p-6">
+    <h3 class="text-2xl font-bold mb-4 flex items-center gap-2" style="color: var(--secondary);">
+      <span>🛫</span> Partidas
+    </h3>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Vuelo</th>
+            <th>Aerolínea</th>
+            <th>Tipo</th>
+            <th>Modelo</th>
+            <th>Matrícula</th>
+            <th>Estado</th>
+            <th>Destino</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for vuelo in departures %}
+          <tr>
+            <td><a href="{{ url_for('vuelo_detalle', ident=vuelo.numero_vuelo) }}" class="font-semibold">{{ vuelo.numero_vuelo }}</a></td>
+            <td>{{ vuelo.aerolinea }}</td>
+            <td>
+              <span class="badge {% if 'Comercial' in vuelo.tipo_vuelo %}badge-comercial{% elif 'Privado' in vuelo.tipo_vuelo %}badge-privado{% elif 'Militar' in vuelo.tipo_vuelo %}badge-militar{% endif %}">
+                {{ vuelo.tipo_vuelo }}
+              </span>
+            </td>
+            <td class="font-medium">{{ vuelo.aeronave }}</td>
+            <td class="text-sm" style="color: var(--muted-foreground);">{{ vuelo.aeronave.matricula }}</td>
+            <td class="text-sm">{{ vuelo.estado }}</td>
+            <td>{{ vuelo.llegada if vuelo.llegada else '<span style="color: var(--muted-foreground);">N/D</span>' | safe }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 {% endblock %}

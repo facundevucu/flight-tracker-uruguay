@@ -13,10 +13,11 @@ class Aerolinea:
 
 
 class Aeronave:
-    def __init__(self, matricula, codigo_iata, codigo_icao):
+    def __init__(self, matricula, codigo_iata, codigo_icao, modelo=None):
         self.matricula = matricula if self._matricula_valida(matricula) else "Matrícula inválida"
         self.codigo_iata = codigo_iata
         self.codigo_icao = codigo_icao
+        self.modelo = modelo or codigo_iata or codigo_icao or "Desconocido"
 
     def _matricula_valida(self, matricula):
         if not matricula or matricula == "N/A":
@@ -28,7 +29,8 @@ class Aeronave:
 
     def __str__(self):
         bandera = "🇺🇾" if self.es_uruguaya() else ""
-        return f"{self.matricula} {bandera}".strip()
+        # Mostrar modelo en lugar de matrícula
+        return f"{self.modelo} {bandera}".strip()
 
 
 class Aeropuerto:
@@ -47,19 +49,21 @@ class Aeropuerto:
 
 
 class Vuelo:
-    def __init__(self, numero_vuelo, aerolinea, aeronave, salida, llegada, estado):
+    def __init__(self, numero_vuelo, aerolinea, aeronave, salida, llegada, estado, tipo_vuelo="Desconocido"):
         self.numero_vuelo = numero_vuelo if self._numero_vuelo_valido(numero_vuelo) else "Código inválido"
         self.aerolinea = aerolinea
         self.aeronave = aeronave
         self.salida = salida
         self.llegada = llegada
         self.estado = estado
+        self.tipo_vuelo = tipo_vuelo
 
     def _numero_vuelo_valido(self, numero):
         return bool(re.match(r"^[A-Z0-9]{2,3}\d{1,4}$", str(numero)))
 
     def mostrar_info(self):
         print(f"✈️ {self.numero_vuelo} - {self.aerolinea}")
+        print(f"  Tipo: {self.tipo_vuelo}")
         print(f"  Origen: {self.salida}")
         print(f"  Destino: {self.llegada}")
         print(f"  Aeronave: {self.aeronave}")

@@ -1,18 +1,79 @@
 {% extends 'base.html' %}
-{% block title %}Detalle Vuelo {{ vuelo.ident }}{% endblock %}
+{% block title %}Detalle Vuelo {{ vuelo.numero_vuelo }}{% endblock %}
 {% block content %}
-  <h2>Vuelo {{ vuelo.ident }}</h2>
-  <p><strong>Aerolínea:</strong> {{ vuelo.aerolinea }}</p>
-  <p><strong>Tipo:</strong> {{ vuelo.tipo }}</p>
-  <p><strong>Estado:</strong> {{ vuelo.status }}</p>
-  <p><strong>Origen:</strong> {% if vuelo.origin %}{{ vuelo.origin.code }} - {{ vuelo.origin.city }}{% else %}N/D{% endif %}</p>
-  <p><strong>Destino:</strong> {% if vuelo.destination %}{{ vuelo.destination.code }} - {{ vuelo.destination.city }}{% else %}N/D{% endif %}</p>
-  <p><strong>Avión:</strong> {{ vuelo.aircraft_type or 'N/D' }}</p>
-  <p><strong>Horarios:</strong><br>
-     Salida programada: {{ vuelo.scheduled_out or 'N/D' }}<br>
-     Salida real: {{ vuelo.actual_out or 'N/D' }}<br>
-     Llegada programada: {{ vuelo.scheduled_in or 'N/D' }}<br>
-     Llegada real: {{ vuelo.actual_in or 'N/D' }}
-  </p>
-  <p><a href="{{ url_for('index') }}">Volver</a></p>
+  <div class="mb-6">
+    <a href="{{ url_for('index') }}" class="inline-flex items-center gap-2 text-sm hover:underline" style="color: var(--muted-foreground);">
+      <span>←</span> Volver al listado
+    </a>
+  </div>
+
+  <div class="card p-8">
+    <!-- Header del vuelo -->
+    <div class="border-b pb-6 mb-6" style="border-color: var(--border);">
+      <h2 class="text-3xl font-bold mb-2" style="color: var(--primary);">✈️ Vuelo {{ vuelo.numero_vuelo }}</h2>
+      <span class="badge {% if 'Comercial' in vuelo.tipo_vuelo %}badge-comercial{% elif 'Privado' in vuelo.tipo_vuelo %}badge-privado{% elif 'Militar' in vuelo.tipo_vuelo %}badge-militar{% endif %}">
+        {{ vuelo.tipo_vuelo }}
+      </span>
+    </div>
+
+    <!-- Grid de información -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Columna izquierda -->
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-sm font-semibold uppercase tracking-wide mb-2" style="color: var(--muted-foreground);">Aerolínea</h3>
+          <p class="text-xl font-semibold">{{ vuelo.aerolinea }}</p>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-semibold uppercase tracking-wide mb-2" style="color: var(--muted-foreground);">Aeronave</h3>
+          <p class="text-xl font-semibold">{{ vuelo.aeronave }}</p>
+          <p class="text-sm mt-1" style="color: var(--muted-foreground);">Matrícula: {{ vuelo.aeronave.matricula }}</p>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-semibold uppercase tracking-wide mb-2" style="color: var(--muted-foreground);">Estado</h3>
+          <p class="text-lg">{{ vuelo.estado }}</p>
+        </div>
+      </div>
+
+      <!-- Columna derecha -->
+      <div class="space-y-6">
+        <div class="p-4 rounded-lg" style="background-color: var(--muted);">
+          <div class="flex items-start gap-3">
+            <span class="text-2xl">🛫</span>
+            <div class="flex-1">
+              <h3 class="text-sm font-semibold uppercase tracking-wide mb-1" style="color: var(--muted-foreground);">Origen</h3>
+              {% if vuelo.salida %}
+                <p class="text-lg font-semibold">{{ vuelo.salida }}</p>
+              {% else %}
+                <p class="text-lg" style="color: var(--muted-foreground);">No disponible</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-lg" style="background-color: var(--muted);">
+          <div class="flex items-start gap-3">
+            <span class="text-2xl">🛬</span>
+            <div class="flex-1">
+              <h3 class="text-sm font-semibold uppercase tracking-wide mb-1" style="color: var(--muted-foreground);">Destino</h3>
+              {% if vuelo.llegada %}
+                <p class="text-lg font-semibold">{{ vuelo.llegada }}</p>
+              {% else %}
+                <p class="text-lg" style="color: var(--muted-foreground);">No disponible</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón volver (footer) -->
+    <div class="mt-8 pt-6 border-t" style="border-color: var(--border);">
+      <a href="{{ url_for('index') }}" class="btn-primary px-6 py-3 rounded-lg inline-block">
+        Volver al listado
+      </a>
+    </div>
+  </div>
 {% endblock %}
